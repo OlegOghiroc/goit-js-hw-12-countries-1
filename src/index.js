@@ -17,35 +17,37 @@ const refs = {
 refs.formInput.addEventListener('input', debounce(onInputSearch, 1000));
 
 function onInputSearch(e) {
-    
-    const inputValue = e.target.value;
+    refs.CardContainer.innerHTML = '';
+    const inputValue = e.target.value.trim();
     if (inputValue === '') {
-        refs.CardContainer.innerHTML = '';
         return;
     }
     API.fetchCountries(inputValue).then(renderCountriesMarkup).catch(error => {
         console.log(error)
-        refs.CardContainer.innerHTML = '';
-});
+    });
 }
 
 
 
 function renderCountriesMarkup(country) {
     refs.CardContainer.innerHTML = '';
-    if (country.length > 10) {
+    if (country === undefined) {
+        error({
+          text: 'Hi, please enter a valid name!',
+        });
+        return;
+    } else if (country.length > 10) {
         error({
           text: 'Too many matches found. Please enter a more spesific query!',
         });
-        console.log('більше 10 нотіфікашка');
-        return;
+        console.log('більше 10 нотіфікашка')
+        return
     } else if (country.length > 1 & country.length < 10) {
         const countriesCard = countryMarkupList(country);
         refs.CardContainer.innerHTML = countriesCard;
         console.log('рендеримо тільки список')
-        return;
+        return
     }
-    console.log(country)
     const countryCard = countryMarkup(country);
     refs.CardContainer.innerHTML = countryCard;
 }
